@@ -68,9 +68,9 @@ public class Main {
         hero.setCardName(name);
 
         // Status base ruins só para vermos o buff funcionando
-        hero.setAtaque(1);
-        hero.setDefesa(1);
-        hero.setEspirito(1);
+        hero.setAtaque(2);
+        hero.setDefesa(2);
+        hero.setEspirito(2);
 
         hero.setEffects(effects);
         return hero;

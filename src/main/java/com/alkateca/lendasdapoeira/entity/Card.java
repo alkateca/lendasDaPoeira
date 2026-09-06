@@ -8,6 +8,8 @@ import com.alkateca.lendasdapoeira.enums.TurnPhase;
 import lombok.*;
 
 import com.alkateca.lendasdapoeira.enums.ZoneId;
+
+import java.awt.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,11 +23,17 @@ public class Card {
     private UUID uuid;
     private String cardName;
     private CardType cardType;
+    private Color color;
     private UUID ownerId;
     private ZoneId zoneId;
 
+    private UUID attachedToCardId;
+
+    private Integer turnsRemaining;
 
     private List<Effect> effects;
+
+    private String descricao;
 
     public void onPhaseChange(TurnPhase currentPhase, ResolutionQueue queue) {
 

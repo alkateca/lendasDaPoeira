@@ -6,5 +6,7 @@ public enum ZoneId {
     BENCH,
     DISCARD,
     DECK,
-    EXILE
+    EXILE,
+    RESOLVE,
+    ATTACHED,
 }

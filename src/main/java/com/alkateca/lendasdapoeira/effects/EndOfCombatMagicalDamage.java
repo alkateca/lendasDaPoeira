@@ -6,11 +6,11 @@ import com.alkateca.lendasdapoeira.entity.Card;
 import com.alkateca.lendasdapoeira.entity.HeroCard;
 import com.alkateca.lendasdapoeira.enums.TurnPhase;
 
-public class MagicDamageEffect implements Effect {
+public class EndOfCombatMagicalDamage implements Effect {
 
     private int baseDamage;
 
-    public MagicDamageEffect(int baseDamage) {
+    public EndOfCombatMagicalDamage(int baseDamage) {
         this.baseDamage = baseDamage;
     }
 
@@ -35,6 +35,9 @@ public class MagicDamageEffect implements Effect {
 
             if (danoMagico > 0) {
                 inimigo.setVidaAtual(inimigo.getVidaAtual() - danoMagico);
+
+                engine.addScore(atacante.getOwnerId(), danoMagico);
+
                 System.out.println(atacante.getCardName() + " causou " + danoMagico + " de dano mágico!");
             }
         }

@@ -7,10 +7,14 @@ import com.alkateca.lendasdapoeira.enums.TurnPhase;
 
 public class GlobalBuffEffect implements Effect {
 
-    private int buff;
+    private int buffEsp;
+    private int buffAtk;
+    private int buffDef;
 
-    public GlobalBuffEffect(int buff) {
-        this.buff = buff;
+    public GlobalBuffEffect(int buffEsp, int buffAtk, int buffDef) {
+        this.buffEsp = buffEsp;
+        this.buffAtk = buffAtk;
+        this.buffDef = buffDef;
     }
 
     @Override
@@ -35,11 +39,13 @@ public class GlobalBuffEffect implements Effect {
                     HeroCard ally = (HeroCard) cardOnBoard;
 
                     // Aplica o buff nos atributos de RPG
-                    ally.setEspirito(ally.getEspirito() + buff);
-                    ally.setAtaque(ally.getAtaque() + buff);
-                    ally.setDefesa(ally.getDefesa() + buff);
+                    ally.setEspirito(ally.getEspirito() + buffEsp);
+                    ally.setAtaque(ally.getAtaque() + buffAtk);
+                    ally.setDefesa(ally.getDefesa() + buffDef);
 
-                    System.out.println("    -> O aliado [" + ally.getCardName() + "] recebeu os buffs! (Ataque agora é: " + ally.getAtaque() + ")");
+                    System.out.println("    -> O aliado [" + ally.getCardName() + "] recebeu os buffs! (Ataque agora é: " + ally.getEspirito() + ")" +
+                            "(Ataque agora é: " + ally.getAtaque() + ")" +
+                            "(Ataque agora é: " + ally.getDefesa() + ")");
                 }
             }
         }

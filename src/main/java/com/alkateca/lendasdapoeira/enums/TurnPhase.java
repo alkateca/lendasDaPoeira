@@ -7,5 +7,6 @@ public enum TurnPhase {
     RESOLUTION,
     COMBAT,
     COMBAT_END,
-    DISCARD
+    DISCARD,
+    GAME_OVER
 }

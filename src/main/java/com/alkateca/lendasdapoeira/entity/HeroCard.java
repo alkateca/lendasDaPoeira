@@ -1,5 +1,6 @@
 package com.alkateca.lendasdapoeira.entity;
 
+import com.alkateca.lendasdapoeira.enums.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,7 +19,15 @@ public class HeroCard extends Card{
     private int danoBonus;
     private int vulnerabilidade;
 
-    private List<String> racas;
-    private List<String> afinidades;
+    private List<Raca> racas;
+    private List<Afinidade> afinidades;
+    private List<Casta> casta;
+    private List<Classe> classe;
+
+    private Boolean estaVivo;
+    private Boolean estaAtivo;
+
+    private String descricao;
+
 
 }
