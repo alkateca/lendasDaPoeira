@@ -2,7 +2,7 @@ package com.alkateca.lendasdapoeira.enums;
 
 public enum CardType {
         HERO,
-        MAGIC,
+        SPELL,
         ITEM,
         ACTION,
         THEURGY,

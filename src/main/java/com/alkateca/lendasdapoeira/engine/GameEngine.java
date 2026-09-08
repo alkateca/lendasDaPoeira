@@ -4,6 +4,7 @@ package com.alkateca.lendasdapoeira.engine;
 import com.alkateca.lendasdapoeira.entity.Card;
 import com.alkateca.lendasdapoeira.entity.HeroCard;
 import com.alkateca.lendasdapoeira.entity.Player;
+import com.alkateca.lendasdapoeira.enums.ItemType;
 import com.alkateca.lendasdapoeira.enums.TurnPhase;
 import com.alkateca.lendasdapoeira.enums.ZoneId;
 import lombok.*;
@@ -122,7 +123,6 @@ public class GameEngine {
         System.out.println("☠️ MORTE SÚBITA POR FADIGA!");
         System.out.println("🏆 " + winner.getName() + " VENCEU A PARTIDA!");
 
-        // * Lembrete: Adicione GAME_OVER no seu enum TurnPhase se ainda não existir.
         changePhase(TurnPhase.GAME_OVER);
     }
 
@@ -133,14 +133,10 @@ public class GameEngine {
     private boolean isPlayer1Ready = false;
     private boolean isPlayer2Ready = false;
 
-    // ... variáveis existentes (player1, player2, cardsOnBoard, etc) ...
 
     private int scorePlayer1 = 0;
     private int scorePlayer2 = 0;
 
-    /**
-     * Adiciona pontos (dano ou cura) ao placar de um jogador específico.
-     */
     public void addScore(UUID playerId, int amount) {
         if (playerId.equals(player1.getUuid())) {
             this.scorePlayer1 += amount;
@@ -549,4 +545,74 @@ public class GameEngine {
             drawInitialHand(player, cardsToDraw);
         }
     }
+
+
+    public void equipItem(Card newItem, HeroCard hero) {
+
+        // Busca todos os itens atualmente equipados neste herói
+        List<Card> itensEquipados = this.cardsOnBoard.stream()
+                .filter(c -> c.getZoneId() == ZoneId.ATTACHED && hero.getUuid().equals(c.getAttachedToCardId()))
+                .toList();
+
+        // REGRA 1: Apenas UMA Armadura
+        if (newItem.getItemType() == ItemType.ARMADURA) {
+            itensEquipados.stream()
+                    .filter(c -> c.getItemType() == ItemType.ARMADURA)
+                    .forEach(this::unequipItem);
+        }
+
+        // REGRA 2: Apenas UM Escudo
+        else if (newItem.getItemType() == ItemType.ESCUDO) {
+            itensEquipados.stream()
+                    .filter(c -> c.getItemType() == ItemType.ESCUDO)
+                    .forEach(this::unequipItem);
+        }
+
+        // REGRA 3: Gerenciamento de Armas e Empunhadura (A Matemática do Polvo)
+        else if (newItem.getItemType() == ItemType.ARMA) {
+
+            // Pega apenas as armas equipadas, respeitando a ordem que entraram (a primeira da lista é a mais antiga)
+            List<Card> armas = new ArrayList<>(itensEquipados.stream()
+                    .filter(c -> c.getItemType() == ItemType.ARMA)
+                    .toList());
+
+            int espacosUsados = armas.stream().mapToInt(Card::getEmpunhadura).sum();
+            int espacosNecessarios = newItem.getEmpunhadura();
+            int espacosTotais = hero.getMaxWeaponSlots();
+
+            // Enquanto o espaço estourar o limite, joga fora a arma mais velha (posição 0)
+            while ((espacosUsados + espacosNecessarios) > espacosTotais && !armas.isEmpty()) {
+                Card armaMaisAntiga = armas.get(0);
+
+                System.out.println("⚠️ Sem espaço para [" + newItem.getCardName() + "]. Desequipando arma mais antiga: [" + armaMaisAntiga.getCardName() + "].");
+
+                unequipItem(armaMaisAntiga);
+
+                espacosUsados -= armaMaisAntiga.getEmpunhadura();
+                armas.remove(0); // Tira da lista local para o while poder continuar se necessário
+            }
+        }
+
+        // Se for Jóia ou Ferramenta, passa direto sem restrições.
+
+        // Finalmente, anexa o novo item ao herói
+        newItem.setZoneId(ZoneId.ATTACHED);
+        newItem.setAttachedToCardId(hero.getUuid());
+
+        System.out.println("🗡️ O item [" + newItem.getCardName() + "] foi equipado em [" + hero.getCardName() + "].");
+    }
+
+
+    private void unequipItem(Card item) {
+        item.setZoneId(ZoneId.DISCARD);
+        item.setAttachedToCardId(null);
+
+        if (item.getEffects() != null) {
+            for (com.alkateca.lendasdapoeira.effects.Effect effect : item.getEffects()) {
+                effect.onUnequip(this, item);
+            }
+        }
+    }
+
+
 }

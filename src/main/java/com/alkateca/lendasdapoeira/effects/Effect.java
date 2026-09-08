@@ -10,5 +10,7 @@ public interface Effect {
 
     void resolve(GameEngine gameEngine, Card sourceCard);
 
+    default void onUnequip(GameEngine engine, Card sourceCard) { }
+
 }
 

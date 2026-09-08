@@ -18,11 +18,7 @@ public class HeroCard extends Card{
     private int reducaoDano;
     private int danoBonus;
     private int vulnerabilidade;
-
-    private List<Raca> racas;
-    private List<Afinidade> afinidades;
-    private List<Casta> casta;
-    private List<Classe> classe;
+    private int maxWeaponSlots;
 
     private Boolean estaVivo;
     private Boolean estaAtivo;

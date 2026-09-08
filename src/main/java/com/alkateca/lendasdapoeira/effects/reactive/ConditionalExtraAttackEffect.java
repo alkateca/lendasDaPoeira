@@ -1,10 +1,11 @@
-package com.alkateca.lendasdapoeira.effects;
+package com.alkateca.lendasdapoeira.effects.reactive;
 
+import com.alkateca.lendasdapoeira.effects.Effect;
 import com.alkateca.lendasdapoeira.engine.GameEngine;
 import com.alkateca.lendasdapoeira.entity.Card;
 import com.alkateca.lendasdapoeira.enums.TurnPhase;
 
-public class EndCombatHealAlliesEffect implements Effect {
+public class ConditionalExtraAttackEffect implements Effect {
 
     @Override
     public boolean predicate(Card sourceCard, TurnPhase turnPhase) {

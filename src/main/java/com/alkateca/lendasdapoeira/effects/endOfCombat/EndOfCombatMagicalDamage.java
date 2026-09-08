@@ -1,4 +1,4 @@
-package com.alkateca.lendasdapoeira.effects;
+package com.alkateca.lendasdapoeira.effects.endOfCombat;
 
 import com.alkateca.lendasdapoeira.effects.Effect;
 import com.alkateca.lendasdapoeira.engine.GameEngine;

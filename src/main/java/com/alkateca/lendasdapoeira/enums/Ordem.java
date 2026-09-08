@@ -1,7 +1,7 @@
 package com.alkateca.lendasdapoeira.enums;
 
-public enum Casta {
+public enum Ordem {
     CAVALEIRO,
     LAMINA,
-    NECROMANTE
+    ZUMBI
 }
