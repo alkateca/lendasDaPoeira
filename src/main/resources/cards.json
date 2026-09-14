@@ -1,0 +1,810 @@
+[
+  {
+    "uuid": "20000000-0000-0000-0000-000000000001",
+    "cardName": "Quimera",
+    "cardType": "ITEM",
+    "color": "BLUE",
+    "itemType": "ARMA",
+    "empunhadura": 1,
+    "descricao": "+2 de Espirito +2 de Ataque +2 de Defesa No final do turno: Recupere vida igual seu espirito",
+    "racas": [],
+    "ordem": [
+      "Cavaleiro"
+    ],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "20000000-0000-0000-0000-000000000002",
+    "cardName": "Broche de Cristal",
+    "cardType": "ITEM",
+    "color": "BLUE",
+    "itemType": "JOIA",
+    "empunhadura": 0,
+    "descricao": "Cristal: +2 de Defesa +2 de Espirito",
+    "racas": [],
+    "ordem": [
+      "Cristal"
+    ],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "20000000-0000-0000-0000-000000000003",
+    "cardName": "Lamina de Cristal",
+    "cardType": "ITEM",
+    "color": "BLUE",
+    "itemType": "ARMA",
+    "empunhadura": 1,
+    "descricao": "Cristal: +1 de Ataque",
+    "racas": [],
+    "ordem": [
+      "Cristal"
+    ],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "20000000-0000-0000-0000-000000000004",
+    "cardName": "Dragão de Cristal",
+    "cardType": "ITEM",
+    "color": "BLUE",
+    "itemType": "JOIA",
+    "empunhadura": 0,
+    "descricao": "Cristal: No final do turno: Cause 6 de dano mágico ao inimigo",
+    "racas": [],
+    "ordem": [
+      "Cristal",
+      "Cavaleiro"
+    ],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "20000000-0000-0000-0000-000000000005",
+    "cardName": "Homunculo Carniceiro",
+    "cardType": "ITEM",
+    "color": "BLACK",
+    "itemType": "JOIA",
+    "empunhadura": 0,
+    "descricao": "Zumbi: Final do Turno: Recupere 1 de vida Seu Inimigo Recebe 1 de Dano Direto",
+    "racas": [],
+    "ordem": [
+      "Zumbi"
+    ],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "20000000-0000-0000-0000-000000000006",
+    "cardName": "Quimera Negra",
+    "cardType": "ITEM",
+    "color": "BLACK",
+    "itemType": "ARMA",
+    "empunhadura": 1,
+    "descricao": "Zumbi: Ao Jogar e no Inicio do Turno: Inimigo Espirito -1 Inimigo Ataque -1 Inimigo Defesa -1 Inimigo Vida -1",
+    "racas": [],
+    "ordem": [
+      "Zumbi"
+    ],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "20000000-0000-0000-0000-000000000007",
+    "cardName": "Dragast",
+    "cardType": "ITEM",
+    "color": "BLUE",
+    "itemType": "ARMA",
+    "empunhadura": 1,
+    "descricao": "Única - Cavaleiro: Espirito +2 e Ataque +2 Final do Combate: Recupere 2 pontos de Vida",
+    "racas": [],
+    "ordem": [
+      "Cavaleiro"
+    ],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "20000000-0000-0000-0000-000000000008",
+    "cardName": "Fragmento Afiado",
+    "cardType": "ITEM",
+    "color": "BLUE",
+    "itemType": "ARMA",
+    "empunhadura": 1,
+    "descricao": "Cavaleiro: Você e seus Aliados Recebem Ataque +2 Recupere 2 pontos de Vida",
+    "racas": [],
+    "ordem": [
+      "Cavaleiro"
+    ],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "20000000-0000-0000-0000-000000000009",
+    "cardName": "Rapieira de Cristal",
+    "cardType": "ITEM",
+    "color": "BLUE",
+    "itemType": "ARMA",
+    "empunhadura": 1,
+    "descricao": "Ataque +3. Final do Combate: Cause 5 de Dano Mágico ao Inimigo.",
+    "racas": [],
+    "ordem": [
+      "Cristal"
+    ],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "20000000-0000-0000-0000-000000000010",
+    "cardName": "Garra espectral",
+    "cardType": "ITEM",
+    "color": "NEUTRAL",
+    "itemType": "ARMA",
+    "empunhadura": 1,
+    "descricao": "Ataque +2 Ao jogar: O Inimigo recebe Espirito -2 Início do Combate: O Inimigo recebe Espirito -2 Seus Ataques causam Dano Mágico em vez de Fisico",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "20000000-0000-0000-0000-000000000011",
+    "cardName": "Machado de Gelo",
+    "cardType": "ITEM",
+    "color": "GREEN",
+    "itemType": "ARMA",
+    "empunhadura": 1,
+    "descricao": "Ataque +2 e Defesa +2 Ao jogar: Inimigo recebe +1 de Vulnerabilidade",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "20000000-0000-0000-0000-000000000012",
+    "cardName": "Grande Machado Sombrio",
+    "cardType": "ITEM",
+    "color": "GREEN",
+    "itemType": "ARMA",
+    "empunhadura": 2,
+    "descricao": "Ataque +4 Defesa +2 Os Inimigos Recebem +1 de Vulnerabilidade",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "20000000-0000-0000-0000-000000000013",
+    "cardName": "Artefato Cortante",
+    "cardType": "ITEM",
+    "color": "YELLOW",
+    "itemType": "ARMA",
+    "empunhadura": 2,
+    "descricao": "Ataque +3 e Defesa +1 Ao jogar: Cure seus Aliados em 2",
+    "racas": [],
+    "ordem": [
+      "Guardião do Trono"
+    ],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "30000000-0000-0000-0000-000000000001",
+    "cardName": "Bola de fogo",
+    "cardType": "SPELL",
+    "color": "NEUTRAL",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Afinidade Fogo Cause 4 mais seu espirito de dano mágico ao inimigo",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": [
+      "Fogo"
+    ]
+  },
+  {
+    "uuid": "30000000-0000-0000-0000-000000000002",
+    "cardName": "Maestria com Chamas",
+    "cardType": "SPELL",
+    "color": "NEUTRAL",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Afinidade Fogo Crie e Jogue 3 Bolas de Fogo. Final do Combate: Exile está Carta",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": [
+      "Fogo"
+    ]
+  },
+  {
+    "uuid": "30000000-0000-0000-0000-000000000003",
+    "cardName": "Estatica",
+    "cardType": "SPELL",
+    "color": "NEUTRAL",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Afinidade Ar Cause 3 mais seu espirito de dano mágico ao inimigo Crie uma Estatica em seu baralho",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": [
+      "Ar"
+    ]
+  },
+  {
+    "uuid": "30000000-0000-0000-0000-000000000004",
+    "cardName": "Para-raios",
+    "cardType": "SPELL",
+    "color": "NEUTRAL",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Afinidade Ar Espirito +1 até o Final do Turno Crie e Jogue uma Estatica",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": [
+      "Ar"
+    ]
+  },
+  {
+    "uuid": "30000000-0000-0000-0000-000000000005",
+    "cardName": "Atmosfera Pesada",
+    "cardType": "SPELL",
+    "color": "BLACK",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Afinidade Ar - Zumbi Os Heróis Inimigos recebem -1 de Espirito",
+    "racas": [],
+    "ordem": [
+      "Zumbi"
+    ],
+    "classe": [],
+    "afinidades": [
+      "Ar"
+    ]
+  },
+  {
+    "uuid": "30000000-0000-0000-0000-000000000006",
+    "cardName": "Vendaval Arcano",
+    "cardType": "SPELL",
+    "color": "NEUTRAL",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Afinidade Ar Descarte um Item Aleatório de cada Herói Inimigo.",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": [
+      "Ar"
+    ]
+  },
+  {
+    "uuid": "30000000-0000-0000-0000-000000000007",
+    "cardName": "Quebra!",
+    "cardType": "SPELL",
+    "color": "NEUTRAL",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Afinidade Água Escolha um Item Equipado no Herói Inimigo e o Descarte.",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": [
+      "Agua"
+    ]
+  },
+  {
+    "uuid": "30000000-0000-0000-0000-000000000008",
+    "cardName": "Barreira de Gelo",
+    "cardType": "SPELL",
+    "color": "GREEN",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Afinidade Água Enquanto estiver Equipada Aliados recebem Espirito +1 e Defesa +2",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": [
+      "Agua"
+    ]
+  },
+  {
+    "uuid": "30000000-0000-0000-0000-000000000009",
+    "cardName": "Mordida Glacial",
+    "cardType": "SPELL",
+    "color": "GREEN",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Afinidade Água Ataque +2 e Espirito +1 Aumente em 1 a vulnerabilidade do inimigo",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": [
+      "Agua"
+    ]
+  },
+  {
+    "uuid": "30000000-0000-0000-0000-000000000010",
+    "cardName": "Contra Ataque",
+    "cardType": "SPELL",
+    "color": "BLUE",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Descarte uma Arma equipada no Inimigo. Ataque +3 até o Final do Combate. Cavaleiro: Espirito +1 e Defesa +1 até o Final do Combate.",
+    "racas": [],
+    "ordem": [
+      "Cavaleiro"
+    ],
+    "classe": [],
+    "afinidades": [
+      "Cristal"
+    ]
+  },
+  {
+    "uuid": "30000000-0000-0000-0000-000000000011",
+    "cardName": "Ataque Mágico",
+    "cardType": "SPELL",
+    "color": "BLUE",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Afinidade Cristal A Defesa do seu Inimigo se torna 0 até o Final do Combate",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": [
+      "Cristal"
+    ]
+  },
+  {
+    "uuid": "30000000-0000-0000-0000-000000000012",
+    "cardName": "Golpes Pesados",
+    "cardType": "SPELL",
+    "color": "BLUE",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Afinidade Cristal Ataque +X até o Final do Combate, onde X é seu Espirito",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": [
+      "Cristal"
+    ]
+  },
+  {
+    "uuid": "30000000-0000-0000-0000-000000000013",
+    "cardName": "Massacre Cristalino",
+    "cardType": "SPELL",
+    "color": "BLUE",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Afinidade Cristal Única Seu Inimigo Receber Espirito = 2; Ative Imediatamente todos seus Efeitos de Inicio de Combate e Final de Combate",
+    "racas": [],
+    "ordem": [
+      "Cristal"
+    ],
+    "classe": [],
+    "afinidades": [
+      "Cristal"
+    ]
+  },
+  {
+    "uuid": "30000000-0000-0000-0000-000000000014",
+    "cardName": "Ponto Final",
+    "cardType": "SPELL",
+    "color": "BLUE",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Afinidade Cristal Seu personagem recebe Ataque + X, onde X é seu Espirito vezes 2",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": [
+      "Cristal"
+    ]
+  },
+  {
+    "uuid": "30000000-0000-0000-0000-000000000015",
+    "cardName": "Auto Defesa Magica",
+    "cardType": "SPELL",
+    "color": "BLUE",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Afinidade Cristal Ataque +X até o Final do Combate, onde X é seu Espirito Seu Inimigo recebe Defesa -X, onde X é o Espirito do seu Inimigo",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": [
+      "Cristal"
+    ]
+  },
+  {
+    "uuid": "30000000-0000-0000-0000-000000000016",
+    "cardName": "Risada Sarcástica",
+    "cardType": "THEURGY",
+    "color": "NEUTRAL",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Cause X + 2 Dano Mágico ao seu Oponente, onde X é seu Espirito. Final do Combate: Adicione uma Tristeza no Baralho do Oponente",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "30000000-0000-0000-0000-000000000017",
+    "cardName": "Alma em Chamas",
+    "cardType": "THEURGY",
+    "color": "NEUTRAL",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Afinidade Fogo - Transformador Enquanto estiver Equipada: Espirito +2 e Ataque +3. Final do turno: Recupere 2 de Vida",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": [
+      "Fogo"
+    ]
+  },
+  {
+    "uuid": "30000000-0000-0000-0000-000000000018",
+    "cardName": "Fortaleça sua Fé",
+    "cardType": "THEURGY",
+    "color": "YELLOW",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Guardiões do Trono Ataque +2 Seus Transformadores recebem Ataque +1 até o final da Partida",
+    "racas": [],
+    "ordem": [
+      "Guardião do Trono"
+    ],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "30000000-0000-0000-0000-000000000019",
+    "cardName": "Saque Rápido",
+    "cardType": "THEURGY",
+    "color": "YELLOW",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Guardiões do Trono Jogue uma Arma de sua mão, se o fizer Ataque +3 até o final do turno",
+    "racas": [],
+    "ordem": [
+      "Guardião do Trono"
+    ],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "30000000-0000-0000-0000-000000000020",
+    "cardName": "Disciplina",
+    "cardType": "ACTION",
+    "color": "YELLOW",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Guardiões do Trono Desequipe até duas cartas do seu Oponente, sofra 2 de Dano Direto por Carta Desequipada",
+    "racas": [],
+    "ordem": [
+      "Guardião do Trono"
+    ],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "40000000-0000-0000-0000-000000000001",
+    "cardName": "Ração de emergencia",
+    "cardType": "ACTION",
+    "color": "NEUTRAL",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Compre duas cartas Jogue uma Carta de sua Mão",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "40000000-0000-0000-0000-000000000002",
+    "cardName": "Determinação Cristalina",
+    "cardType": "ACTION",
+    "color": "BLUE",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Ataque +1 até o final do turno Jogue uma Carta do seu descarte",
+    "racas": [],
+    "ordem": [
+      "Cristal",
+      "Cavaleiro"
+    ],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "40000000-0000-0000-0000-000000000003",
+    "cardName": "Convocação",
+    "cardType": "ACTION",
+    "color": "NEUTRAL",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Escolha um Heroi Aliado: Altere seu Estado Ativo",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "40000000-0000-0000-0000-000000000004",
+    "cardName": "Mirar na cabeça",
+    "cardType": "ACTION",
+    "color": "NEUTRAL",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Escolha um Heroi Inimigo: Cause 3 de dano Direto",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "40000000-0000-0000-0000-000000000005",
+    "cardName": "Ritos Fúnebres",
+    "cardType": "ACTION",
+    "color": "BLACK",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Zumbi: Escolha um Heroi Aliado: Recupere 5 de vida Se estiver Morto e sua vida ficar acima de 0: O reviva",
+    "racas": [],
+    "ordem": [
+      "Zumbi"
+    ],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "40000000-0000-0000-0000-000000000006",
+    "cardName": "Exumação",
+    "cardType": "ACTION",
+    "color": "BLACK",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Zumbi: Receba Espirito -1, Ataque -1 e Defesa -1 Jogue uma Carta do seu descarte",
+    "racas": [],
+    "ordem": [
+      "Zumbi"
+    ],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "40000000-0000-0000-0000-000000000007",
+    "cardName": "Banir!",
+    "cardType": "ACTION",
+    "color": "NEUTRAL",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Escolha uma carta Inimiga Em Jogo ou no Descarte Exile todas as suas Cópias. Final do Combate: Exile esta Carta",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "40000000-0000-0000-0000-000000000008",
+    "cardName": "Impulso de Poder",
+    "cardType": "ACTION",
+    "color": "BLUE",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Aumente seu Dano Bônus em 2 até o final do turno.",
+    "racas": [],
+    "ordem": [
+      "Cristal"
+    ],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "40000000-0000-0000-0000-000000000009",
+    "cardName": "Tristeza",
+    "cardType": "ACTION",
+    "color": "NEUTRAL",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Me exile. Quem bate esquece, quem apanha não",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "40000000-0000-0000-0000-000000000010",
+    "cardName": "Luz da Lua",
+    "cardType": "ACTION",
+    "color": "GREEN",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Ataque +2 Cure seu personagem em X, onde X é seu Ataque",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "40000000-0000-0000-0000-000000000011",
+    "cardName": "Ordem Divina",
+    "cardType": "THEURGY",
+    "color": "YELLOW",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Escolha um Aliado, ele recebe Ataque +2 e cura 2 pontos. Se jogado por um Guardião do Trono: Ataque +2 e cura 2 pontos",
+    "racas": [],
+    "ordem": [
+      "Guardião do Trono"
+    ],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "40000000-0000-0000-0000-000000000012",
+    "cardName": "Sica",
+    "cardType": "ITEM",
+    "color": "RED",
+    "itemType": "ARMA",
+    "empunhadura": 1,
+    "descricao": "Arma de Uma Mão Ataque +1 e Espirito +1",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "40000000-0000-0000-0000-000000000013",
+    "cardName": "Sino do Caçador",
+    "cardType": "ITEM",
+    "color": "RED",
+    "itemType": "FERRAMENTA",
+    "empunhadura": 0,
+    "descricao": "Ferramenta Espirito +1 Jogue uma Ferramenta de sua mão Jogue a próxima Arma de Uma Mão de seu Baralho",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "40000000-0000-0000-0000-000000000014",
+    "cardName": "Arpão terrestre",
+    "cardType": "ITEM",
+    "color": "RED",
+    "itemType": "ARMA",
+    "empunhadura": 1,
+    "descricao": "Arma de Uma Mão Ataque +2 e Defesa +1 Adicione a próxima Ferramente de seu Baralho a sua mão",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "40000000-0000-0000-0000-000000000015",
+    "cardName": "Bomba de fumaça",
+    "cardType": "ITEM",
+    "color": "RED",
+    "itemType": "FERRAMENTA",
+    "empunhadura": 0,
+    "descricao": "Ferramenta Ataque +2 Ao jogar: Seu inimigo recebe Defesa -2",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "40000000-0000-0000-0000-000000000016",
+    "cardName": "Tesouro Cristalino dos Caçadores",
+    "cardType": "ITEM",
+    "color": "RED",
+    "itemType": "JOIA",
+    "empunhadura": 0,
+    "descricao": "Jóia Ataque +X, onde X é seu Espirito",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "40000000-0000-0000-0000-000000000017",
+    "cardName": "Afie suas Lâminas",
+    "cardType": "ACTION",
+    "color": "RED",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Ação Recebe Ataque + X, onde X é o seu Bonus de Ataque Duplicado",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "40000000-0000-0000-0000-000000000018",
+    "cardName": "Estilo Secreto do Caçador",
+    "cardType": "ACTION",
+    "color": "RED",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Ação Recebe Empunhadura Tripla até o Final da Partida Jogue uma Arma de Uma Mão de sua Mão",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "40000000-0000-0000-0000-000000000019",
+    "cardName": "Corte seus Pescoços",
+    "cardType": "ACTION",
+    "color": "RED",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Ação Para cada Arma Equipada no seu personagem, Realize um Ataque Aleatoriamente a um Inimigo. Desequipe todas suas Armas Equipadas",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "40000000-0000-0000-0000-000000000020",
+    "cardName": "Peitoral de brasas",
+    "cardType": "ITEM",
+    "color": "RED",
+    "itemType": "ARMADURA",
+    "empunhadura": 0,
+    "descricao": "Armadura Espirito +1 e Defesa +2",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "40000000-0000-0000-0000-000000000021",
+    "cardName": "Escudo ardente",
+    "cardType": "ITEM",
+    "color": "RED",
+    "itemType": "ESCUDO",
+    "empunhadura": 0,
+    "descricao": "Escudo Espirito +1 e Defesa +1",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": []
+  },
+  {
+    "uuid": "40000000-0000-0000-0000-000000000022",
+    "cardName": "Muralha de Fogo",
+    "cardType": "SPELL",
+    "color": "RED",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Afinidade Fogo Cause X de Dano Mágico ao seu Inimigo, onde X é seu Espirito somado a sua Defesa.",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": [
+      "Fogo"
+    ]
+  },
+  {
+    "uuid": "40000000-0000-0000-0000-000000000023",
+    "cardName": "Cauterizar",
+    "cardType": "SPELL",
+    "color": "RED",
+    "itemType": "NENHUM",
+    "empunhadura": 0,
+    "descricao": "Afinidade Fogo Cure X de Vida, onde X é seu Espirito.",
+    "racas": [],
+    "ordem": [],
+    "classe": [],
+    "afinidades": [
+      "Fogo"
+    ]
+  }
+]

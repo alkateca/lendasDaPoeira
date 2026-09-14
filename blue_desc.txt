@@ -1,0 +1,10 @@
+Quimera: +2 de Espirito +2 de Ataque +2 de Defesa No final do turno: Recupere vida igual seu espirito
+Broche de Cristal: Cristal: +2 de Defesa +2 de Espirito
+Dragast: Única - Cavaleiro: +2 de Espirito +2 de Ataque Final do Combate: Recupere 2 pontos de Vida
+Fragmento Afiado: Cavaleiro: Você e seus Aliados Recebem Ataque +2 Recupere 2 pontos de Vida
+Rapieira de Cristal: Ataque +3. Final do Combate: Cause 5 de Dano Mágico ao Inimigo.
+Contra Ataque: Descarte uma Arma equipada no Inimigo. Ataque +3 até o Final do Combate. Cavaleiro: Espirito +1 e Defesa +1 até o Final do Combate.
+Enamor,O Grande Cavaleiro: Inicio do turno: Se não estiver com Dragast Equipada: Jogue Dragast de sua Mão, Baralho ou Descarte
+Ageus, Constructo Cristalino: Seus Aliados recebem Espirito +2 e Defesa +2 para cada Cavaleiro Aliado Morto
+Cavaleiro Onear: Uma vez por Turno: Ao Jogar uma Magia: Ataque +2
+Moyra, Santa das Laminas: Inicio do turno: O Inimigo recebe -2 de Espirito Ao jogar: Magia Ataque +2 Final do turno: Cause 5 de dano mágico

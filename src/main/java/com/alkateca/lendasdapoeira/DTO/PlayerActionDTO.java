@@ -15,4 +15,7 @@ public class PlayerActionDTO {
 
     // O alvo da ação (pode ser nulo, por exemplo, ao clicar em "Pronto")
     private UUID targetCardId;
+
+    // Cartas preparadas para a fase de resolução
+    private java.util.List<UUID> stagedCards;
 }

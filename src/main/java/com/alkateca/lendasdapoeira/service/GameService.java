@@ -2,72 +2,225 @@ package com.alkateca.lendasdapoeira.service;
 
 import com.alkateca.lendasdapoeira.DTO.CardDTO;
 import com.alkateca.lendasdapoeira.DTO.GameStateDTO;
+import com.alkateca.lendasdapoeira.engine.CardFactory;
 import com.alkateca.lendasdapoeira.engine.GameEngine;
 import com.alkateca.lendasdapoeira.entity.Card;
 import com.alkateca.lendasdapoeira.entity.Deck;
 import com.alkateca.lendasdapoeira.entity.HeroCard;
 import com.alkateca.lendasdapoeira.entity.Player;
+
+import com.alkateca.lendasdapoeira.enums.TurnPhase;
+import com.alkateca.lendasdapoeira.enums.ZoneId;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.HashMap;
 
 @Service
 public class GameService {
 
-    private GameEngine engine;
+    private Map<UUID, GameEngine> activeGames = new HashMap<>();
+    private Map<UUID, UUID> playerToGameMap = new HashMap<>();
+    private List<HeroCard> allHeroesDb = new ArrayList<>();
+    private List<Card> allCardsDb = new ArrayList<>();
 
-    public void startNewGame() {
-        UUID p1Id = UUID.randomUUID();
-        UUID p2Id = UUID.randomUUID();
+    @PostConstruct
+    public void carregarBancoDeDados() {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            // Lê os arquivos da pasta src/main/resources/
+            InputStream heroisStream = new ClassPathResource("heros.json").getInputStream();
+            InputStream cartasStream = new ClassPathResource("cards.json").getInputStream();
 
-        List<Card> heroListP1 = new ArrayList<>();
-        List<Card> deckListP1 = new ArrayList<>();
-        Deck deckP1 = new Deck("deck1", deckListP1, heroListP1);
-        Player player1 = new Player(p1Id, "José", deckP1);
+            this.allHeroesDb = mapper.readValue(heroisStream, new TypeReference<List<HeroCard>>(){});
+            this.allCardsDb = mapper.readValue(cartasStream, new TypeReference<List<Card>>(){});
 
-        List<Card> heroListP2 = new ArrayList<>();
-        List<Card> deckListP2 = new ArrayList<>();
-        Deck deckP2 = new Deck("deck2", deckListP2, heroListP2);
-        Player player2 = new Player(p2Id, "Oponente", deckP2);
-
-
-        this.engine = new GameEngine(player1, player2);
-        this.engine.startGame();
-
-        engine.getCardsOnBoard().addAll(deckListP1);
-        deckListP1.forEach(c -> c.setZoneId(com.alkateca.lendasdapoeira.enums.ZoneId.HAND));
-
-        System.out.println("Partida iniciada no Servidor com UUIDs sincronizados com o Frontend!");
-    }
-
-    public GameEngine getEngine() {
-        if (engine == null) {
-            throw new IllegalStateException("A partida ainda não começou!");
+            System.out.println("📚 Banco de dados carregado: " + allHeroesDb.size() + " Heróis e " + allCardsDb.size() + " Cartas de Baralho.");
+        } catch (Exception e) {
+            System.err.println("⚠️ Erro ao desserializar os JSONs: " + e.getMessage());
         }
-        return engine;
     }
 
-    public GameStateDTO getGameStateAsDTO() {
-        if (this.engine == null) {
+    public void createGame(Player p1, Player p2) {
+        Deck deckP1 = p1.getCurrentDeck();
+        Player player1 = new Player(p1.getUuid(), p1.getName(), deckP1);
+
+        Deck deckP2 = p2.getCurrentDeck();
+        Player player2 = new Player(p2.getUuid(), p2.getName(), deckP2);
+
+        GameEngine engine = new GameEngine(player1, player2);
+        engine.startGame();
+
+        UUID gameId = UUID.randomUUID();
+        activeGames.put(gameId, engine);
+        playerToGameMap.put(p1.getUuid(), gameId);
+        playerToGameMap.put(p2.getUuid(), gameId);
+
+        System.out.println("Nova partida iniciada! ID: " + gameId);
+    }
+
+
+    private Deck loadPlayerDeck(UUID ownerId, String deckId, List<String> heroNames, List<String> cardNames, List<String> extraNames) {
+        List<Card> heroList = new ArrayList<>();
+        List<Card> deckList = new ArrayList<>();
+        List<Card> extraList = new ArrayList<>();
+
+        for (String name : heroNames) {
+            HeroCard baseHero = allHeroesDb.stream()
+                    .filter(h -> h.getCardName().equals(name))
+                    .findFirst()
+                    .orElse(null);
+
+            if (baseHero != null) {
+                HeroCard clone = cloneHero(baseHero);
+                clone.setOwnerId(ownerId);
+                CardFactory.buildCardLogic(clone); // Injeta passivas (se houver)
+                heroList.add(clone);
+            }
+        }
+
+        for (String name : cardNames) {
+            Card baseCard = allCardsDb.stream()
+                    .filter(c -> c.getCardName().equals(name))
+                    .findFirst()
+                    .orElse(null);
+
+            if (baseCard != null) {
+                Card clone = cloneCard(baseCard);
+                clone.setOwnerId(ownerId);
+                CardFactory.buildCardLogic(clone); // Injeta comportamento jogável
+                deckList.add(clone);
+            }
+        }
+
+        if (extraNames != null) {
+            for (String name : extraNames) {
+                Card baseCard = allCardsDb.stream()
+                        .filter(c -> c.getCardName().equals(name))
+                        .findFirst()
+                        .orElse(null);
+
+                if (baseCard != null) {
+                    Card clone = cloneCard(baseCard);
+                    clone.setOwnerId(ownerId);
+                    CardFactory.buildCardLogic(clone);
+                    extraList.add(clone);
+                }
+            }
+        }
+
+        return new Deck(deckId, deckList, heroList, extraList);
+    }
+
+    /**
+     * Clona um HeroCard a partir da base do JSON para que os jogadores
+     * tenham instâncias únicas na memória durante a partida.
+     */
+    private HeroCard cloneHero(HeroCard base) {
+        HeroCard clone = new HeroCard();
+        clone.setUuid(UUID.randomUUID());
+        clone.setCardName(base.getCardName());
+        clone.setCardType(base.getCardType());
+        clone.setColor(base.getColor());
+        clone.setDescricao(base.getDescricao());
+        clone.setEspirito(base.getEspirito());
+        clone.setAtaque(base.getAtaque());
+        clone.setDefesa(base.getDefesa());
+        clone.setVidaMaxima(base.getVidaMaxima());
+        clone.setVidaAtual(base.getVidaMaxima());
+        clone.setMaxWeaponSlots(base.getMaxWeaponSlots());
+        clone.setReducaoDano(base.getReducaoDano());
+        clone.setDanoBonus(base.getDanoBonus());
+        clone.setVulnerabilidade(base.getVulnerabilidade());
+        clone.setEstaVivo(base.getEstaVivo());
+        clone.setEstaAtivo(base.getEstaAtivo());
+
+        // Copia as listas (importante instanciar um novo ArrayList)
+        clone.setRacas(base.getRacas() != null ? new ArrayList<>(base.getRacas()) : new ArrayList<>());
+        clone.setOrdem(base.getOrdem() != null ? new ArrayList<>(base.getOrdem()) : new ArrayList<>());
+        clone.setClasse(base.getClasse() != null ? new ArrayList<>(base.getClasse()) : new ArrayList<>());
+        clone.setAfinidades(base.getAfinidades() != null ? new ArrayList<>(base.getAfinidades()) : new ArrayList<>());
+
+        return clone;
+    }
+
+    /**
+     * Clona uma Carta padrão (Ação, Item, Feitiço).
+     */
+    private Card cloneCard(Card base) {
+        Card clone = new Card();
+        clone.setUuid(UUID.randomUUID());
+        clone.setCardName(base.getCardName());
+        clone.setCardType(base.getCardType());
+        clone.setColor(base.getColor());
+        clone.setItemType(base.getItemType());
+        clone.setEmpunhadura(base.getEmpunhadura());
+        clone.setDescricao(base.getDescricao());
+
+        // Copia as listas de restrições de uso
+        clone.setRacas(base.getRacas() != null ? new ArrayList<>(base.getRacas()) : new ArrayList<>());
+        clone.setOrdem(base.getOrdem() != null ? new ArrayList<>(base.getOrdem()) : new ArrayList<>());
+        clone.setClasse(base.getClasse() != null ? new ArrayList<>(base.getClasse()) : new ArrayList<>());
+        clone.setAfinidades(base.getAfinidades() != null ? new ArrayList<>(base.getAfinidades()) : new ArrayList<>());
+
+        return clone;
+    }
+
+    public UUID getGameIdByPlayerId(UUID playerId) {
+        return playerToGameMap.get(playerId);
+    }
+
+    public GameEngine getEngineByPlayerId(UUID playerId) {
+        UUID gameId = getGameIdByPlayerId(playerId);
+        if (gameId == null) {
+            throw new IllegalStateException("Jogador não está em uma partida!");
+        }
+        return activeGames.get(gameId);
+    }
+
+    public GameStateDTO getGameStateAsDTO(UUID playerId) {
+        GameEngine engine = getEngineByPlayerId(playerId);
+        if (engine == null) {
             throw new IllegalStateException("O jogo não iniciou.");
         }
 
         GameStateDTO state = new GameStateDTO();
-        state.setCurrentPhase(this.engine.getCurrentPhase().name());
+        state.setCurrentPhase(engine.getCurrentPhase().name());
+        state.setActivePlayerId(engine.getActivePlayerId());
+        state.setResolvingCardId(engine.getResolvingCardId());
+        state.setWaitingEffectChoice(engine.isWaitingEffectChoice());
+        state.setPendingChoiceType(engine.getPendingChoiceType());
+        state.setHasPendingEffects(!engine.getResolutionQueue().isEmpty());
 
-        // Mapeia todas as cartas da mesa para DTOs
-        List<CardDTO> dtos = this.engine.getCardsOnBoard().stream().map(card -> {
+        List<CardDTO> dtos = engine.getCardsOnBoard().stream().map(card -> {
             CardDTO dto = new CardDTO();
             dto.setId(card.getUuid().toString());
-            dto.setName(card.getCardName());
-            dto.setType(card.getCardType().name());
-            dto.setZone(card.getZoneId().name());
             dto.setOwnerId(card.getOwnerId().toString());
+            dto.setZone(card.getZoneId().name());
 
-            // Se for Herói, extraímos os status reais de RPG
+            // Esconder nome/tipo se a carta estiver na zona de resolução em preparação e não for minha
+            if (engine.getCurrentPhase() == TurnPhase.PREPARATION 
+                && card.getZoneId() == ZoneId.RESOLVE 
+                && !card.getOwnerId().equals(playerId)) {
+                
+                dto.setName("Carta Oculta");
+                dto.setType("UNKNOWN");
+                dto.setDescription("Oponente está preparando algo...");
+            } else {
+                dto.setName(card.getCardName());
+                dto.setType(card.getCardType().name());
+                dto.setDescription(card.getDescricao());
+            }
+
             if (card instanceof HeroCard) {
                 HeroCard hero = (HeroCard) card;
                 dto.setHp(hero.getVidaAtual());
@@ -75,9 +228,9 @@ public class GameService {
                 dto.setAttack(hero.getAtaque());
                 dto.setDefense(hero.getDefesa());
                 dto.setSpirit(hero.getEspirito());
+                dto.setActive(hero.getEstaAtivo());
 
-                // Conta quantos itens estão na mesa anexados a este herói
-                long attached = this.engine.getCardsOnBoard().stream()
+                long attached = engine.getCardsOnBoard().stream()
                         .filter(c -> c.getZoneId() == com.alkateca.lendasdapoeira.enums.ZoneId.ATTACHED)
                         .filter(c -> hero.getUuid().equals(c.getAttachedToCardId()))
                         .count();

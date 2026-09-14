@@ -15,14 +15,18 @@ public class Player {
 
     private UUID uuid;
     private String name;
+    private List<Deck> decks;
+    private Deck currentDeck;
 
-    //private List<Deck> decks;
+    public Player(UUID uuid, String name, Deck deck) {
+        this.uuid = uuid;
+        this.name = name;
+        this.currentDeck = deck;
+    }
 
     //private Integer currency;
 
-    private Deck currentDeck;
-
-//    private Integer elo;
+    //private Integer elo;
 
     //private Integer energy;
 

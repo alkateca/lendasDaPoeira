@@ -9,4 +9,8 @@ public class GameStateDTO {
     private String currentPhase;
     private UUID activePlayerId;
     private List<CardDTO> cardsOnBoard;
+    private UUID resolvingCardId;
+    private boolean hasPendingEffects;
+    private boolean waitingEffectChoice;
+    private String pendingChoiceType;
 }

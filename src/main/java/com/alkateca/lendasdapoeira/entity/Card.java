@@ -6,9 +6,9 @@ import com.alkateca.lendasdapoeira.engine.ResolutionQueue;
 import com.alkateca.lendasdapoeira.enums.*;
 import lombok.*;
 
-import java.awt.*;
 import java.util.List;
 import java.util.UUID;
+import com.alkateca.lendasdapoeira.enums.Colors;
 
 @Data
 @AllArgsConstructor
@@ -20,11 +20,14 @@ public class Card {
     private UUID uuid;
     private String cardName;
     private CardType cardType;
-    private Color color;
+    private Colors color;
     private UUID ownerId;
     private ZoneId zoneId;
     private ItemType itemType = ItemType.NENHUM;
     private int empunhadura = 0;
+
+    private Boolean estaVivo;
+
 
     private List<Raca> racas;
     private List<Afinidade> afinidades;
@@ -41,8 +44,17 @@ public class Card {
     private String descricao;
 
     public void onPhaseChange(TurnPhase currentPhase, ResolutionQueue queue) {
-
         if (effects == null) return;
+
+        if (this.cardType == CardType.HERO) {
+            if (this.zoneId == ZoneId.DECK || this.zoneId == ZoneId.HAND || this.zoneId == ZoneId.DISCARD) {
+                return;
+            }
+        } else {
+            if (this.zoneId != ZoneId.RESOLVE && this.zoneId != ZoneId.ATTACHED) {
+                return;
+            }
+        }
 
         for (Effect effect : effects) {
             if (effect.predicate(this, currentPhase)) {

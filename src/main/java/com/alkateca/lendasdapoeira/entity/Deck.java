@@ -4,6 +4,7 @@ import lombok.*;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -12,10 +13,21 @@ import java.util.List;
 @Setter
 public class Deck {
 
+    private UUID uuid;
+
     private String deckName;
 
     private List<Card> cardList;
     private List<Card> heroList;
+    private List<Card> extraList;
+
+    public Deck(String deckId, List<Card> deckList, List<Card> heroList, List<Card> extraList) {
+        this.uuid = UUID.randomUUID();
+        this.deckName = deckId;
+        this.cardList = deckList;
+        this.heroList = heroList;
+        this.extraList = extraList;
+    }
 
     public void shuffleDeck(){
         Collections.shuffle(cardList);

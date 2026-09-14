@@ -19,4 +19,8 @@ public class CardDTO {
 
     // Para renderizar o badge de "X Itens" na interface
     private int attachedCount;
+    
+    private String description;
+    
+    private Boolean active;
 }

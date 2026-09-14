@@ -24,6 +24,13 @@ public class GameEngine {
     private List<Card> cardsOnBoard;
 
     private ResolutionQueue resolutionQueue = new ResolutionQueue();
+    
+    // Controle de Resolução Assíncrona
+    private UUID resolvingCardId;
+    private boolean waitingEffectChoice = false;
+    private String pendingChoiceType;
+    private UUID playerChoosingId;
+    private UUID chosenCardId;
 
     public GameEngine(Player player1, Player player2) {
         this.player1 = player1;
@@ -46,8 +53,9 @@ public class GameEngine {
             card.onPhaseChange(turnPhase, resolutionQueue);
         }
 
-        // 3. Resolve a fila
-        resolutionQueue.resolveAll(this);
+        // 3. Fica disponível para resolver passo a passo pelo frontend
+        // As cartas colocaram efeitos na fila (via onPhaseChange)
+        // A resolução será feita via controller com advance-resolution
     }
 
     public void startGame() {
@@ -87,6 +95,14 @@ public class GameEngine {
         List<Card> regularCards = player.getCurrentDeck().getCardList();
         for (Card card : regularCards) {
             card.setZoneId(ZoneId.DECK);
+            this.cardsOnBoard.add(card);
+        }
+
+        if (player.getCurrentDeck().getExtraList() != null) {
+            for (Card extra : player.getCurrentDeck().getExtraList()) {
+                extra.setZoneId(ZoneId.EXTRADECK);
+                this.cardsOnBoard.add(extra);
+            }
         }
 
         player.getCurrentDeck().shuffleDeck();
@@ -107,9 +123,6 @@ public class GameEngine {
                 cardToDraw.setZoneId(ZoneId.HAND);
                 drawn++;
             } else {
-                // O baralho secou antes de terminar a compra exigida!
-                System.out.println("⚠️ O baralho de " + player.getName() + " esgotou!");
-                triggerSuddenDeath(player);
                 return; // Interrompe o método de compra
             }
         }
@@ -117,14 +130,6 @@ public class GameEngine {
         System.out.println("Jogador " + player.getName() + " comprou " + drawn + " carta(s).");
     }
 
-    private void triggerSuddenDeath(Player defeatedPlayer) {
-        Player winner = defeatedPlayer.getUuid().equals(player1.getUuid()) ? player2 : player1;
-
-        System.out.println("☠️ MORTE SÚBITA POR FADIGA!");
-        System.out.println("🏆 " + winner.getName() + " VENCEU A PARTIDA!");
-
-        changePhase(TurnPhase.GAME_OVER);
-    }
 
     private UUID activePlayerId;
 
@@ -137,13 +142,10 @@ public class GameEngine {
     private int scorePlayer1 = 0;
     private int scorePlayer2 = 0;
 
-    public void addScore(UUID playerId, int amount) {
-        if (playerId.equals(player1.getUuid())) {
-            this.scorePlayer1 += amount;
-        } else if (playerId.equals(player2.getUuid())) {
-            this.scorePlayer2 += amount;
-        }
+    public void replenishHand(Player player) {
+
     }
+
 
     public void nextPhase() {
         switch (this.currentPhase) {
@@ -159,6 +161,9 @@ public class GameEngine {
                     isPlayer1Ready = false;
                     isPlayer2Ready = false;
                     changePhase(TurnPhase.RESOLUTION);
+                    if (resolutionQueue.isEmpty()) {
+                        nextPhase();
+                    }
                 } else {
                     System.out.println("Aguardando o outro jogador terminar de preparar suas cartas...");
                 }
@@ -181,6 +186,7 @@ public class GameEngine {
                         .forEach(c -> c.setZoneId(ZoneId.DISCARD));
 
                 changePhase(TurnPhase.COMBAT);
+                nextPhase();
                 break;
 
             case COMBAT:
@@ -188,15 +194,14 @@ public class GameEngine {
                 resolvePhysicalCombat(); // Calcula o dano (Aceita HP negativo)
 
                 changePhase(TurnPhase.COMBAT_END);
+                nextPhase();
                 break;
 
             case COMBAT_END:
-                // 3. Limpeza e Mortes
 
-                // O "Ceifador" entra AQUI, matando quem ficou com HP <= 0
                 processCasualtiesAndFatigue();
 
-                // Retorna os sobreviventes inativos para o banco
+                // 3. Retorna os sobreviventes inativos para o banco
                 this.cardsOnBoard.stream()
                         .filter(c -> c.getZoneId() == ZoneId.BATTLE)
                         .forEach(c -> c.setZoneId(ZoneId.BENCH));
@@ -269,22 +274,27 @@ public class GameEngine {
         if (this.currentPhase == TurnPhase.GAME_OVER) return;
 
         // 4. Exaustão e Despertar de Esquadrão
-        Player activePlayer = this.activePlayerId.equals(player1.getUuid()) ? player1 : player2;
-        long activeHeroesCount = this.cardsOnBoard.stream()
-                .filter(c -> c instanceof HeroCard && c.getOwnerId().equals(activePlayerId))
+        long p1ActiveHeroes = this.cardsOnBoard.stream()
+                .filter(c -> c instanceof HeroCard && c.getOwnerId().equals(player1.getUuid()))
                 .map(c -> (HeroCard) c)
                 .filter(h -> h.getEstaVivo() && h.getEstaAtivo())
                 .count();
 
-        if (activeHeroesCount == 0) {
-            System.out.println("🔄 O esquadrão de " + activePlayer.getName() + " estava totalmente exausto. Todos recuperam suas energias!");
+        long p2ActiveHeroes = this.cardsOnBoard.stream()
+                .filter(c -> c instanceof HeroCard && c.getOwnerId().equals(player2.getUuid()))
+                .map(c -> (HeroCard) c)
+                .filter(h -> h.getEstaVivo() && h.getEstaAtivo())
+                .count();
+
+        if (p1ActiveHeroes == 0 || p2ActiveHeroes == 0) {
+            System.out.println("🔄 Como um dos jogadores não possui heróis ativos, ambos os esquadrões descansam e recuperam suas energias!");
             this.cardsOnBoard.stream()
-                    .filter(c -> c instanceof HeroCard && c.getOwnerId().equals(activePlayerId))
+                    .filter(c -> c instanceof HeroCard)
                     .map(c -> (HeroCard) c)
                     .filter(HeroCard::getEstaVivo)
                     .forEach(h -> h.setEstaAtivo(true));
         } else {
-            System.out.println("⚡ " + activePlayer.getName() + " ainda possui " + activeHeroesCount + " herói(s) disposto(s) a lutar no banco.");
+            System.out.println("⚡ Ambos os jogadores possuem heróis ativos, a batalha segue sem descanso.");
         }
 
         // 5. O ciclo recomeça
@@ -292,23 +302,19 @@ public class GameEngine {
     }
 
     public void chooseCombatant(UUID playerId, UUID heroCardId) {
-        if (currentPhase != TurnPhase.CHOICE) {
-            throw new IllegalStateException("Não estamos na fase de escolha!");
-        }
-        if (!playerId.equals(activePlayerId)) {
-            throw new IllegalStateException("Apenas o jogador ativo pode fazer a escolha!");
-        }
-
-        // Lógica de definir o herói ativo...
-        System.out.println("Jogador " + playerId + " escolheu o herói " + heroCardId);
-
-        // Como ele já escolheu, a mesa avança automaticamente
-        nextPhase();
+        // Redireciona para o novo método atualizado
+        chooseHeroForCombat(playerId, heroCardId);
     }
 
-    public void setPlayerReady(UUID playerId) {
-        if (currentPhase != TurnPhase.PREPARATION) {
-            throw new IllegalStateException("Não é momento de preparação!");
+    public void setPlayerReady(UUID playerId, java.util.List<UUID> stagedCards, UUID targetHeroId) {
+        if (this.currentPhase != TurnPhase.PREPARATION) {
+            throw new IllegalStateException("Só é possível confirmar jogadas na fase de PREPARATION!");
+        }
+
+        if (stagedCards != null) {
+            for (UUID cardId : stagedCards) {
+                playCard(playerId, cardId, targetHeroId);
+            }
         }
 
         if (playerId.equals(player1.getUuid())) {
@@ -317,7 +323,7 @@ public class GameEngine {
             isPlayer2Ready = true;
         }
 
-        // Tenta avançar a fase. Se o outro ainda não estiver pronto, o nextPhase() vai segurar o jogo.
+        System.out.println("=> Jogador " + playerId + " está pronto.");
         nextPhase();
     }
 
@@ -349,8 +355,11 @@ public class GameEngine {
 
         // NOVA ZONA: A carta fica "flutuando" aguardando a fase RESOLUTION
         cardToPlay.setZoneId(ZoneId.RESOLVE);
-
-        this.cardsOnBoard.add(cardToPlay);
+        
+        // Adiciona à mesa para que os efeitos e a fase de RESOLUTION a encontrem!
+        if (!cardsOnBoard.contains(cardToPlay)) {
+            cardsOnBoard.add(cardToPlay);
+        }
     }
 
     public HeroCard getActiveEnemyHero(UUID myPlayerId) {
@@ -403,10 +412,12 @@ public class GameEngine {
         if (this.currentPhase != TurnPhase.CHOICE) {
             throw new IllegalStateException("Não estamos na fase de escolha de heróis!");
         }
+        if (!playerId.equals(activePlayerId)) {
+            throw new IllegalStateException("Apenas o jogador ativo pode escolher heróis!");
+        }
 
         Card chosenHero = this.cardsOnBoard.stream()
                 .filter(c -> c.getUuid().equals(heroCardId))
-                .filter(c -> c.getOwnerId().equals(playerId))
                 .filter(c -> c.getZoneId() == ZoneId.BENCH)
                 .filter(c -> {
                     // Garante que o herói está vivo e ativo antes de ir pro combate
@@ -419,9 +430,19 @@ public class GameEngine {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Herói inválido, exausto ou já está em combate!"));
 
+        // Demove o herói atual se houver
+        UUID ownerOfChosenHero = chosenHero.getOwnerId();
+        this.cardsOnBoard.stream()
+                .filter(c -> c.getOwnerId().equals(ownerOfChosenHero) && c.getZoneId() == ZoneId.BATTLE && c instanceof HeroCard)
+                .forEach(c -> {
+                    c.setZoneId(ZoneId.BENCH);
+                    System.out.println("=> O herói [" + c.getCardName() + "] retornou para o banco.");
+                });
+
         chosenHero.setZoneId(ZoneId.BATTLE);
         System.out.println("=> O jogador " + playerId + " enviou o herói [" + chosenHero.getCardName() + "] para o BATTLE!");
     }
+
 
     public void resolvePhysicalCombat() {
         if (this.currentPhase != TurnPhase.COMBAT) {
@@ -446,12 +467,10 @@ public class GameEngine {
         heroP1.setVidaAtual(heroP1.getVidaAtual() - danoEmP1);
         heroP2.setVidaAtual(heroP2.getVidaAtual() - danoEmP2);
 
-        // NOVA REGRA: Acumula a pontuação de dano realizado
-        addScore(player1.getUuid(), danoEmP2);
-        addScore(player2.getUuid(), danoEmP1);
 
         System.out.println("⚔️ COMBATE: [" + heroP1.getCardName() + "] (" + heroP1.getVidaAtual() + " HP) vs [" + heroP2.getCardName() + "] (" + heroP2.getVidaAtual() + " HP)");
     }
+
 
     private void processCasualtiesAndFatigue() {
         System.out.println("☠️ Checando baixas da rodada...");
@@ -466,13 +485,9 @@ public class GameEngine {
 
                         hero.setEstaVivo(false);
                         hero.setEstaAtivo(false);
-
-                        // O herói morto volta e permanece no banco!
                         hero.setZoneId(ZoneId.BENCH);
 
-                        limparEquipamentos(hero.getUuid());
                     }
-                    // 2. Processa a Fadiga (Sobreviveu, mas lutou)
                     else if (hero.getVidaAtual() > 0 && hero.getZoneId() == ZoneId.BATTLE) {
                         hero.setEstaAtivo(false);
                         System.out.println("💤 [" + hero.getCardName() + "] sobreviveu ao combate, mas está exausto (inativo).");
@@ -480,15 +495,6 @@ public class GameEngine {
                 });
     }
 
-    private void limparEquipamentos(UUID deadHeroId) {
-        this.cardsOnBoard.stream()
-                .filter(c -> c.getZoneId() == ZoneId.ATTACHED && deadHeroId.equals(c.getAttachedToCardId()))
-                .forEach(c -> {
-                    c.setZoneId(ZoneId.DISCARD);
-                    c.setAttachedToCardId(null);
-                    System.out.println(" ↳ Equipamento [" + c.getCardName() + "] foi destruído junto com o herói.");
-                });
-    }
 
     public void executeCombatPhaseSequence() {
 
@@ -516,103 +522,64 @@ public class GameEngine {
                 .forEach(c -> c.setZoneId(ZoneId.BENCH));
     }
 
-    public void discardCard(UUID playerId, UUID cardId) {
-        if (this.currentPhase != TurnPhase.DISCARD) {
-            throw new IllegalStateException("Descartes só podem ser feitos na fase DISCARD.");
-        }
 
-        Player player = playerId.equals(player1.getUuid()) ? player1 : player2;
+    public void passPhase(UUID playerId) {
+        switch (this.currentPhase) {
+            case CHOICE:
+                // Verifica se é o turno do jogador que está pedindo para passar
+                if (!playerId.equals(this.activePlayerId)) {
+                    throw new IllegalStateException("Não é o seu turno para passar a vez na fase de escolha!");
+                }
 
-        Card cardToDiscard = player.getCurrentDeck().getCardList().stream()
-                .filter(c -> c.getUuid().equals(cardId) && c.getZoneId() == ZoneId.HAND)
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Carta não encontrada na mão!"));
+                // Em CHOICE, passar significa "Confirmar a escolha dos heróis"
+                
+                // Valida se há 1 herói do p1 e 1 herói do p2 na BATTLE
+                long p1InBattle = cardsOnBoard.stream().filter(c -> c instanceof HeroCard && c.getOwnerId().equals(player1.getUuid()) && c.getZoneId() == ZoneId.BATTLE).count();
+                long p2InBattle = cardsOnBoard.stream().filter(c -> c instanceof HeroCard && c.getOwnerId().equals(player2.getUuid()) && c.getZoneId() == ZoneId.BATTLE).count();
 
-        cardToDiscard.setZoneId(ZoneId.DISCARD);
-        System.out.println("🗑️ O jogador " + player.getName() + " descartou a carta [" + cardToDiscard.getCardName() + "].");
-    }
+                if (p1InBattle != 1 || p2InBattle != 1) {
+                    throw new IllegalStateException("É necessário 1 herói seu e 1 herói inimigo no combate para prosseguir!");
+                }
+                
+                nextPhase(); // Vai para PREPARATION
+                break;
 
-    private void replenishHand(Player player) {
-        long currentHandSize = this.cardsOnBoard.stream()
-                .filter(c -> c.getOwnerId().equals(player.getUuid()) && c.getZoneId() == ZoneId.HAND)
-                .count();
+            case PREPARATION:
+                // Se o jogador clicar em "Passar" durante a preparação,
+                // é a mesma coisa que dizer que ele está Pronto.
+                setPlayerReady(playerId, null, null);
+                break;
 
-        int cardsToDraw = 5 - (int) currentHandSize;
+            case DISCARD:
+                // Na fase de descarte, só pode passar se a mão estiver dentro do limite (ex: 5)
+                long handSize = this.cardsOnBoard.stream()
+                        .filter(c -> c.getOwnerId().equals(playerId) && c.getZoneId() == ZoneId.HAND)
+                        .count();
 
-        if (cardsToDraw > 0) {
-            System.out.println("Repondo a mão de " + player.getName() + ": precisa comprar " + cardsToDraw + " carta(s).");
-            // Reutiliza o método que você já criou para o começo do jogo
-            drawInitialHand(player, cardsToDraw);
-        }
-    }
+                if (handSize <= 5) {
+                    if (playerId.equals(player1.getUuid())) {
+                        isPlayer1Ready = true;
+                    } else if (playerId.equals(player2.getUuid())) {
+                        isPlayer2Ready = true;
+                    }
 
+                    System.out.println("Jogador " + playerId + " encerrou sua etapa de descarte com segurança.");
 
-    public void equipItem(Card newItem, HeroCard hero) {
+                    if (isPlayer1Ready && isPlayer2Ready) {
+                        isPlayer1Ready = false;
+                        isPlayer2Ready = false;
+                        nextPhase();
+                    } else {
+                        System.out.println("Aguardando o outro jogador descartar cartas...");
+                    }
+                } else {
+                    throw new IllegalStateException("Você tem cartas demais! É obrigatório descartar.");
+                }
+                break;
 
-        // Busca todos os itens atualmente equipados neste herói
-        List<Card> itensEquipados = this.cardsOnBoard.stream()
-                .filter(c -> c.getZoneId() == ZoneId.ATTACHED && hero.getUuid().equals(c.getAttachedToCardId()))
-                .toList();
-
-        // REGRA 1: Apenas UMA Armadura
-        if (newItem.getItemType() == ItemType.ARMADURA) {
-            itensEquipados.stream()
-                    .filter(c -> c.getItemType() == ItemType.ARMADURA)
-                    .forEach(this::unequipItem);
-        }
-
-        // REGRA 2: Apenas UM Escudo
-        else if (newItem.getItemType() == ItemType.ESCUDO) {
-            itensEquipados.stream()
-                    .filter(c -> c.getItemType() == ItemType.ESCUDO)
-                    .forEach(this::unequipItem);
-        }
-
-        // REGRA 3: Gerenciamento de Armas e Empunhadura (A Matemática do Polvo)
-        else if (newItem.getItemType() == ItemType.ARMA) {
-
-            // Pega apenas as armas equipadas, respeitando a ordem que entraram (a primeira da lista é a mais antiga)
-            List<Card> armas = new ArrayList<>(itensEquipados.stream()
-                    .filter(c -> c.getItemType() == ItemType.ARMA)
-                    .toList());
-
-            int espacosUsados = armas.stream().mapToInt(Card::getEmpunhadura).sum();
-            int espacosNecessarios = newItem.getEmpunhadura();
-            int espacosTotais = hero.getMaxWeaponSlots();
-
-            // Enquanto o espaço estourar o limite, joga fora a arma mais velha (posição 0)
-            while ((espacosUsados + espacosNecessarios) > espacosTotais && !armas.isEmpty()) {
-                Card armaMaisAntiga = armas.get(0);
-
-                System.out.println("⚠️ Sem espaço para [" + newItem.getCardName() + "]. Desequipando arma mais antiga: [" + armaMaisAntiga.getCardName() + "].");
-
-                unequipItem(armaMaisAntiga);
-
-                espacosUsados -= armaMaisAntiga.getEmpunhadura();
-                armas.remove(0); // Tira da lista local para o while poder continuar se necessário
-            }
-        }
-
-        // Se for Jóia ou Ferramenta, passa direto sem restrições.
-
-        // Finalmente, anexa o novo item ao herói
-        newItem.setZoneId(ZoneId.ATTACHED);
-        newItem.setAttachedToCardId(hero.getUuid());
-
-        System.out.println("🗡️ O item [" + newItem.getCardName() + "] foi equipado em [" + hero.getCardName() + "].");
-    }
-
-
-    private void unequipItem(Card item) {
-        item.setZoneId(ZoneId.DISCARD);
-        item.setAttachedToCardId(null);
-
-        if (item.getEffects() != null) {
-            for (com.alkateca.lendasdapoeira.effects.Effect effect : item.getEffects()) {
-                effect.onUnequip(this, item);
-            }
+            default:
+                throw new IllegalStateException("Você não pode pular a fase de " + this.currentPhase);
         }
     }
-
 
 }

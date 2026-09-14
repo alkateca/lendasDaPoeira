@@ -9,4 +9,5 @@ public enum ZoneId {
     EXILE,
     RESOLVE,
     ATTACHED,
+    EXTRADECK
 }
