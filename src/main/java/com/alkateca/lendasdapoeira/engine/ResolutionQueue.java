@@ -19,26 +19,10 @@ public class ResolutionQueue {
     }
 
     public void enqueue(Effect effect, Card sourceCard) {
+
         queue.add(new PendingEffect(effect, sourceCard));
     }
 
-    public void resolveNext(GameEngine engine) {
-        if (!queue.isEmpty()) {
-            PendingEffect pending = queue.peek();
-            engine.setResolvingCardId(pending.getSourceCard().getUuid());
-            
-            pending.getEffect().resolve(engine, pending.getSourceCard());
-            
-            if (!engine.isWaitingEffectChoice()) {
-                queue.poll();
-                if (queue.isEmpty()) {
-                    engine.setResolvingCardId(null);
-                }
-            }
-        } else {
-            engine.setResolvingCardId(null);
-        }
-    }
 
     public void resolveAll(GameEngine engine) {
         while (!queue.isEmpty()) {
@@ -48,6 +32,7 @@ public class ResolutionQueue {
     }
 
     public boolean isEmpty() {
+
         return queue.isEmpty();
     }
 }

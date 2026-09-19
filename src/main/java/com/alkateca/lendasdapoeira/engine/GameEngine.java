@@ -25,14 +25,13 @@ public class GameEngine {
     private boolean isPlayer1Ready = false;
     private boolean isPlayer2Ready = false;
 
+    private TurnPhase turnPhase;
+
+
     public GameEngine(Player player1, Player player2) {
         this.player1 = player1;
         this.player2 = player2;
         this.cardsOnBoard = new ArrayList<>();
-    }
-
-    private void shuffle(Player player){
-        player.getCurrentDeck().shuffleDeck();
     }
 
     private void drawInitialHand(Player player) {
@@ -86,19 +85,7 @@ public class GameEngine {
 
     }
 
-    public void selectHeroCard(HeroCard heroCard) {
-
-        if (player1.getUuid().equals(heroCard.getOwnerId()) && heroCard.getZoneId() == ZoneId.BENCH
-                && heroCard.getEstaAtivo() == true) {
-            heroCard.setZoneId(ZoneId.BATTLE);
-        }
-
-        if (player2.getUuid().equals(heroCard.getOwnerId()) && heroCard.getZoneId() == ZoneId.BENCH
-                && heroCard.getEstaAtivo() == true) {
-            heroCard.setZoneId(ZoneId.BATTLE);
-        }
-
-    }
+    public void selectHeroCard() {}
 
     public void physicalCombat() {
 
@@ -106,6 +93,44 @@ public class GameEngine {
 
     public void effectsResolution(){}
 
+    public void startOfCombatEffects(){}
+
+    public void endOfCombatEffects(){}
+
+    public void discard(){}
+
+    public void gameOver(){}
+
+    public void gamePhase(){
+        switch (turnPhase) {
+            case GAME_START:
+                startGame();
+                break;
+            case CHOICE:
+                break;
+            case PREPARATION:
+                selectHeroCard();
+                break;
+            case COMBAT_START:
+                startOfCombatEffects();
+                break;
+            case RESOLUTION:
+                effectsResolution();
+                break;
+            case COMBAT:
+                physicalCombat();
+                break;
+            case COMBAT_END:
+                endOfCombatEffects();
+                break;
+            case DISCARD:
+                discard();
+                break;
+            case GAME_OVER:
+                gameOver();
+                break;
+        }
+    }
 
 
 }
