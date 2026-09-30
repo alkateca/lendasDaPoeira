@@ -23,6 +23,4 @@ public class HeroCard extends Card{
     private Boolean estaAtivo;
     private Boolean estaVivo;
 
-
-
 }

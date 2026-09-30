@@ -17,6 +17,7 @@ import java.util.*;
 @Setter
 public class GameEngine {
 
+    private GameState gameState;
     private Player player1;
     private Player player2;
     private List<Card> cardsOnBoard;
@@ -29,6 +30,7 @@ public class GameEngine {
 
 
     public GameEngine(Player player1, Player player2) {
+        //this.gameState = new GameState();
         this.player1 = player1;
         this.player2 = player2;
         this.cardsOnBoard = new ArrayList<>();
@@ -55,6 +57,7 @@ public class GameEngine {
     }
 
     public void startGame() {
+
         System.out.println("--- INICIANDO A PARTIDA ---");
 
         Random random = new Random();
@@ -62,9 +65,11 @@ public class GameEngine {
 
         if (player1Starts) {
             this.activePlayerId = player1.getUuid();
+            if (this.gameState != null) this.gameState.setActiveTurnPlayerId(player1.getUuid());
             System.out.println("=> Sorteio: " + player1.getName() + " ganhou no cara ou coroa e começa jogando!");
         } else {
             this.activePlayerId = player2.getUuid();
+            if (this.gameState != null) this.gameState.setActiveTurnPlayerId(player2.getUuid());
             System.out.println("=> Sorteio: " + player2.getName() + " ganhou no cara ou coroa e começa jogando!");
         }
 
@@ -74,32 +79,120 @@ public class GameEngine {
         drawInitialHand(player1);
         drawInitialHand(player2);
 
-        for(Card heroCard : player1.getCurrentDeck().getCardList()){
+        for(Card heroCard : player1.getCurrentDeck().getHeroList()){
             heroCard.setZoneId(ZoneId.BENCH);
         }
 
-        for(Card heroCard : player2.getCurrentDeck().getCardList()){
+        for(Card heroCard : player2.getCurrentDeck().getHeroList()){
             heroCard.setZoneId(ZoneId.BENCH);
         }
 
+        changePhase(TurnPhase.CHOICE);
 
     }
 
-    public void selectHeroCard() {}
+    public void choice() {
 
-    public void physicalCombat() {
+        changePhase(TurnPhase.COMBAT_START);
 
     }
 
-    public void effectsResolution(){}
+    public void combatStart(){
 
-    public void startOfCombatEffects(){}
+        changePhase(TurnPhase.RESOLUTION);
+    }
 
-    public void endOfCombatEffects(){}
+    public void resolution() {
 
-    public void discard(){}
+        List<Card> firstPlayerCards = gameState.getActiveTurnPlayerId().equals(gameState.getPlayer1().getUuid())
+                ? gameState.getPlayer1PlayedCards()
+                : gameState.getPlayer2PlayedCards();
 
-    public void gameOver(){}
+        List<Card> secondPlayerCards = gameState.getActiveTurnPlayerId().equals(gameState.getPlayer1().getUuid())
+                ? gameState.getPlayer2PlayedCards()
+                : gameState.getPlayer1PlayedCards();
+
+        int maxCards = Math.max(firstPlayerCards.size(), secondPlayerCards.size());
+
+        for (int i = 0; i < maxCards; i++) {
+            if (i < firstPlayerCards.size()) {
+                Card c1 = firstPlayerCards.get(i);
+                if (c1.getEffects() != null) {
+                    c1.getEffects().forEach(effect -> resolutionQueue.enqueue(effect, c1));
+                }
+            }
+            if (i < secondPlayerCards.size()) {
+                Card c2 = secondPlayerCards.get(i);
+                if (c2.getEffects() != null) {
+                    c2.getEffects().forEach(effect -> resolutionQueue.enqueue(effect, c2));
+                }
+            }
+        }
+
+        resolutionQueue.resolveAll(this);
+
+        gameState.getPlayer1PlayedCards().clear();
+        gameState.getPlayer2PlayedCards().clear();
+
+        changePhase(TurnPhase.COMBAT);
+    }
+
+    public void combat() {
+
+        changePhase(TurnPhase.COMBAT_END);
+    }
+
+
+    public void combatEnd() {
+
+        checkBoardRefresh(gameState.getPlayer1());
+        checkBoardRefresh(gameState.getPlayer2());
+
+        if (checkGameOver()) {
+            changePhase(TurnPhase.GAME_OVER);
+        } else {
+            changePhase(TurnPhase.DISCARD);
+        }
+    }
+
+    public void discard(){
+
+        if(gameState.getActiveTurnPlayerId().equals(gameState.getPlayer1().getUuid())) {
+            gameState.setActiveTurnPlayerId(gameState.getPlayer2().getUuid());
+        } else {
+            gameState.setActiveTurnPlayerId(gameState.getPlayer1().getUuid());
+        }
+
+        changePhase(TurnPhase.CHOICE);
+    }
+
+    public void gameOver() {
+        System.out.println("--- PARTIDA ENCERRADA ---");
+    }
+
+    private boolean checkGameOver() {
+        return false;
+    }
+
+    private void changePhase(TurnPhase newPhase) {
+        this.turnPhase = newPhase;
+        if (this.gameState != null) {
+            this.gameState.setTurnPhase(newPhase);
+        }
+    }
+
+    private void checkBoardRefresh(Player player) {
+
+        boolean hasActiveHeroes = player.getCurrentDeck().getHeroList().stream()
+                .filter(c -> c instanceof HeroCard && c.getZoneId() == ZoneId.BENCH)
+                .anyMatch(c -> ((HeroCard) c).getEstaAtivo().equals(true));
+
+        if (!hasActiveHeroes) {
+            player.getCurrentDeck().getHeroList().stream()
+                    .filter(c -> c instanceof HeroCard && c.getZoneId() == ZoneId.BENCH  && ((HeroCard) c).getEstaAtivo().equals(true))
+                    .forEach(c -> ((HeroCard) c).setEstaAtivo(true));
+        }
+    }
 
     public void gamePhase(){
         switch (turnPhase) {
@@ -109,19 +202,19 @@ public class GameEngine {
             case CHOICE:
                 break;
             case PREPARATION:
-                selectHeroCard();
+                choice();
                 break;
             case COMBAT_START:
-                startOfCombatEffects();
+                combatStart();
                 break;
             case RESOLUTION:
-                effectsResolution();
+                resolution();
                 break;
             case COMBAT:
-                physicalCombat();
+                combat();
                 break;
             case COMBAT_END:
-                endOfCombatEffects();
+                combatEnd();
                 break;
             case DISCARD:
                 discard();

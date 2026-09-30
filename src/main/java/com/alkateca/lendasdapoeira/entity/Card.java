@@ -6,6 +6,7 @@ import com.alkateca.lendasdapoeira.engine.ResolutionQueue;
 import com.alkateca.lendasdapoeira.enums.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import com.alkateca.lendasdapoeira.enums.Colors;
@@ -36,7 +37,7 @@ public class Card {
 
     private Integer turnsRemaining;
 
-    private List<Effect> effects;
+    private List<Effect> effects = new ArrayList<>();
 
     public void onPhaseChange(TurnPhase currentPhase, ResolutionQueue queue) {
         if (effects == null) return;

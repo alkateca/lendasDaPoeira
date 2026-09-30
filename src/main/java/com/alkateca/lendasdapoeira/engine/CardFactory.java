@@ -1,6 +1,7 @@
 package com.alkateca.lendasdapoeira.engine;
 
 import com.alkateca.lendasdapoeira.effects.Effect;
+import com.alkateca.lendasdapoeira.effects.startOfCombat.StartOfCombatMagicDamageEffect;
 import com.alkateca.lendasdapoeira.entity.Card;
 
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ public class CardFactory {
             case "Isenora, Santa das Laminas":
                 break;
             case "Moyra, Aprendiz da Santa":
+                effects.add(new StartOfCombatMagicDamageEffect(3));
                 break;
             case "Naelis, Grande Artesã de Cristais":
                  break;
